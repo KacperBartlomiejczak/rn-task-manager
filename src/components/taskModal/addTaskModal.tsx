@@ -21,7 +21,7 @@ export default function AddTaskModal() {
 
   const taskTitleRef = useRef<HTMLInputElement>(null);
 
-  const { handleAddTask} = useContext(TaskContext)!;
+  const { handleAddTask } = useContext(TaskContext)!;
 
   if (!handleAddTask) {
     throw new Error("AddTaskModal must be used within TaskProvider");
@@ -41,16 +41,16 @@ export default function AddTaskModal() {
       <DialogTrigger asChild>
         <TaskButton
           title="Add Task"
-          className="bg-green-400 hover:bg-green-600 focus:bg-green-600 md:flex-2 lg:flex-3"
+          className="bg-green-400 hover:bg-green-600 focus:bg-green-600 "
         />
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent aria-describedby="dialog-description">
         <CheckBoxProvider>
           <form className="flex flex-col mb-2" onSubmit={handleSubmitTask}>
             <DialogTitle className="font-bold text-xl">
               Create new task
             </DialogTitle>
-            <p className="text-gray-500 mb-4">
+            <p id="dialog-description" className="text-gray-500 mb-4">
               Add a task with optional recurring schedule
             </p>
             <Input

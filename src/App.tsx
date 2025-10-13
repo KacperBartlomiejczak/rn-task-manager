@@ -8,34 +8,41 @@ import Calender from "./assets/calender";
 import { TaskContext } from "./context/taskContext";
 import NoTaskAvailable from "./components/noTaskAvailable";
 import AddTaskModal from "./components/taskModal/addTaskModal";
-import { TaskProvider } from "@/context/taskContext";
+import TaskCard from "./components/taskCard/taskCard";
 
 function App() {
+  let content = <NoTaskAvailable />;
   const taskContext = useContext(TaskContext);
+  if (!taskContext) {
+    throw new Error("App must be used within TaskProvider");
+  }
 
-  console.log(taskContext?.taskList);
+  if (taskContext?.taskList.length) {
+    content = <TaskCard title={taskContext!.taskList[0].title} />;
+  }
+
   return (
-    <TaskProvider>
-      <main>
-        <div className="container mx-auto">
-          <Header />
-          <div className="flex flex-col md:flex-row md:gap-4">
-            <div className="flex flex-col md:flex-1">
-              <TaskDailyProgress />
-              <TaskButton
-                title="View Daily Summary"
-                onClick={() => {}}
-                className="hover:bg-green-400 focus:bg-green-400"
-              >
-                <Calender size={24} color="#000000" />
-              </TaskButton>
-            </div>
-            <AddTaskModal />
+    <main>
+      <div className="container mx-auto">
+        <Header />
+        <div className="flex flex-col md:flex-row md:gap-4">
+          <div className="flex flex-col md:flex-1">
+            <TaskDailyProgress totalTasks={taskContext.taskList.length} />
+            <TaskButton
+              title="View Daily Summary"
+              onClick={() => {}}
+              className="hover:bg-green-400 focus:bg-green-400"
+            >
+              <Calender size={24} color="#000000" />
+            </TaskButton>
           </div>
-          {taskContext?.taskList.length === 0 ? <NoTaskAvailable /> : null}
+          <div className="flex flex-col gap-2 md:flex-2 lg:flex-3">
+            <AddTaskModal />
+            {content}
+          </div>
         </div>
-      </main>
-    </TaskProvider>
+      </div>
+    </main>
   );
 }
 
