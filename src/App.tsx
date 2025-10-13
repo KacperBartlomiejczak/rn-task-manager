@@ -1,15 +1,42 @@
 import "./App.css";
-import Header from "./components/Header";
+import { useContext } from "react";
+import Header from "./components/header";
+import TaskDailyProgress from "./components/taskDailyProgress";
+import TaskButton from "./components/taskButton";
+import Calender from "./assets/calender";
+
+import { TaskContext } from "./context/taskContext";
+import NoTaskAvailable from "./components/noTaskAvailable";
 
 function App() {
+  const taskContext = useContext(TaskContext);
+
+  console.log(taskContext);
+
   return (
-    <>
-      <main>
-        <div className="container mx-auto">
-          <Header />
+    <main>
+      <div className="container mx-auto">
+        <Header />
+        <div className="flex flex-col md:flex-row md:gap-4">
+          <div className="flex flex-col md:flex-1">
+            <TaskDailyProgress />
+            <TaskButton
+              title="View Daily Summary"
+              onClick={() => {}}
+              className="hover:bg-green-400 focus:bg-green-400"
+            >
+              <Calender size={24} color="#000000" />
+            </TaskButton>
+          </div>
+          <TaskButton
+            title="Add Task"
+            onClick={() => {}}
+            className="bg-green-400 hover:bg-green-600 focus:bg-green-600 md:flex-2 lg:flex-3"
+          ></TaskButton>
         </div>
-      </main>
-    </>
+        {taskContext?.taskList.length === 0 ? <NoTaskAvailable /> : null}
+      </div>
+    </main>
   );
 }
 
