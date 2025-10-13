@@ -14,7 +14,7 @@ interface Task {
   isCompleted: boolean;
   recurrence?: {
     enabled: boolean;
-    days: (
+    days?: (
       | "Monday"
       | "Tuesday"
       | "Wednesday"

@@ -7,7 +7,7 @@ import Calender from "./assets/calender";
 
 import { TaskContext } from "./context/taskContext";
 import NoTaskAvailable from "./components/noTaskAvailable";
-import AddTaskModal from "./components/addTaskModal";
+import AddTaskModal from "./components/taskModal/addTaskModal";
 
 function App() {
   const taskContext = useContext(TaskContext);
