@@ -1,33 +1,43 @@
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import TaskButton from "../taskButton";
-import { Input } from "../ui/input";
+import React, { useRef, useState, useContext } from "react";
 
-import { Button } from "../ui/button";
-import { useRef, useState, useContext } from "react";
-
+//Context
 import TaskCheckBoxes from "./tasksCheckboxes";
-import { CheckBoxProvider } from "@/context/checkBoxContext";
 import { TaskContext } from "@/context/taskContext";
-
-interface Task {
-  id: string;
-  title: string;
-}
+//Components
+import TaskButton from "../taskButton";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { CheckBoxProvider } from "@/context/checkBoxContext";
 
 export default function AddTaskModal() {
   const [taskName, setTaskName] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
   const taskTitleRef = useRef<HTMLInputElement>(null);
 
-  const taskContext = useContext(TaskContext);
+  const { handleAddTask} = useContext(TaskContext)!;
 
-  if (!taskContext) {
+  if (!handleAddTask) {
     throw new Error("AddTaskModal must be used within TaskProvider");
   }
 
-  const { handleAddTask } = useContext(TaskContext);
+  const handleSubmitTask = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const id = Date.now().toString();
+    setTaskName(taskTitleRef.current?.value || "");
+    handleAddTask({ id, title: taskName, isCompleted: false });
+    setIsOpen(false);
+    setTaskName("");
+  };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <TaskButton
           title="Add Task"
@@ -36,8 +46,10 @@ export default function AddTaskModal() {
       </DialogTrigger>
       <DialogContent>
         <CheckBoxProvider>
-          <form className="flex flex-col mb-2">
-            <h1 className="font-bold text-xl">Create new task</h1>
+          <form className="flex flex-col mb-2" onSubmit={handleSubmitTask}>
+            <DialogTitle className="font-bold text-xl">
+              Create new task
+            </DialogTitle>
             <p className="text-gray-500 mb-4">
               Add a task with optional recurring schedule
             </p>
