@@ -3,16 +3,28 @@ import TaskButton from "../taskButton";
 import { Input } from "../ui/input";
 
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useRef, useState, useContext } from "react";
 
 import TaskCheckBoxes from "./tasksCheckboxes";
 import { CheckBoxProvider } from "@/context/checkBoxContext";
+import { TaskContext } from "@/context/taskContext";
 
+interface Task {
+  id: string;
+  title: string;
+}
 
 export default function AddTaskModal() {
   const [taskName, setTaskName] = useState("");
+  const taskTitleRef = useRef<HTMLInputElement>(null);
 
+  const taskContext = useContext(TaskContext);
 
+  if (!taskContext) {
+    throw new Error("AddTaskModal must be used within TaskProvider");
+  }
+
+  const { handleAddTask } = useContext(TaskContext);
 
   return (
     <Dialog>
@@ -33,6 +45,7 @@ export default function AddTaskModal() {
               placeholder="Task Name"
               required
               value={taskName}
+              ref={taskTitleRef}
               onChange={(e) => setTaskName(e.target.value)}
             />
             <h2 className="font-bold text-lg mt-4">Recurrence</h2>

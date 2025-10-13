@@ -7,23 +7,12 @@ interface TaskContextType {
   setCompletedTasks: (count: number) => void;
   taskList: Task[];
   setTaskList: (tasks: Task[]) => void;
+  handleAddTask: (taskData: Task) => void;
 }
 interface Task {
   id: string;
   title: string;
   isCompleted: boolean;
-  recurrence?: {
-    enabled: boolean;
-    days?: (
-      | "Monday"
-      | "Tuesday"
-      | "Wednesday"
-      | "Thursday"
-      | "Friday"
-      | "Saturday"
-      | "Sunday"
-    )[];
-  };
 }
 
 export const TaskContext = createContext<TaskContextType | null>(null);
@@ -32,6 +21,13 @@ export const TaskProvider = ({ children }: { children: React.ReactNode }) => {
   const [completedTasks, setCompletedTasks] = useState(0);
   const [taskList, setTaskList] = useState<Task[]>([]);
 
+  const handleAddTask = (taskData: Task) => {
+    setTaskList((prevTasks) => {
+      
+      return [...prevTasks, {...taskData}];
+    });
+  };
+
   return (
     <TaskContext.Provider
       value={{
@@ -39,6 +35,7 @@ export const TaskProvider = ({ children }: { children: React.ReactNode }) => {
         setCompletedTasks,
         taskList,
         setTaskList,
+        handleAddTask,
       }}
     >
       {children}
