@@ -7,6 +7,7 @@ import Calender from "./assets/calender";
 
 import { TaskContext } from "./context/taskContext";
 import NoTaskAvailable from "./components/noTaskAvailable";
+import AddTaskModal from "./components/addTaskModal";
 
 function App() {
   const taskContext = useContext(TaskContext);
@@ -28,11 +29,7 @@ function App() {
               <Calender size={24} color="#000000" />
             </TaskButton>
           </div>
-          <TaskButton
-            title="Add Task"
-            onClick={() => {}}
-            className="bg-green-400 hover:bg-green-600 focus:bg-green-600 md:flex-2 lg:flex-3"
-          ></TaskButton>
+          <AddTaskModal />
         </div>
         {taskContext?.taskList.length === 0 ? <NoTaskAvailable /> : null}
       </div>
