@@ -1,6 +1,6 @@
 import "./App.css";
 import { useContext } from "react";
-import Header from "./components/Header";
+import Header from "./components/header";
 import TaskDailyProgress from "./components/taskDailyProgress";
 import TaskButton from "./components/taskButton";
 import Calender from "./assets/calender";
@@ -8,7 +8,7 @@ import Calender from "./assets/calender";
 import { TaskContext } from "./context/taskContext";
 import NoTaskAvailable from "./components/noTaskAvailable";
 import AddTaskModal from "./components/taskModal/addTaskModal";
-import TaskCard from "./components/taskCard/taskCard";
+import TaskCards from "./components/taskCard/taskCards";
 
 function App() {
   let content = <NoTaskAvailable />;
@@ -18,7 +18,7 @@ function App() {
   }
 
   if (taskContext?.taskList.length) {
-    content = <TaskCard title={taskContext!.taskList[0].title} />;
+    content = <TaskCards tasks={taskContext.taskList} />;
   }
 
   return (
@@ -27,7 +27,10 @@ function App() {
         <Header />
         <div className="flex flex-col md:flex-row md:gap-4">
           <div className="flex flex-col md:flex-1">
-            <TaskDailyProgress totalTasks={taskContext.taskList.length} />
+            <TaskDailyProgress
+              totalTasks={taskContext.taskList.length}
+              completedTasks={taskContext.completedTasks}
+            />
             <TaskButton
               title="View Daily Summary"
               onClick={() => {}}
