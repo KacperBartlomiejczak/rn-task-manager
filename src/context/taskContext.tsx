@@ -9,6 +9,7 @@ interface TaskContextType {
   setTaskList: (tasks: Task[]) => void;
   handleAddTask: (taskData: Task) => void;
   handleDeleteTask: (taskId: string) => void;
+  handleMakeTaskComplete: (taskId: string) => void;
 }
 
 interface Task {
@@ -35,6 +36,16 @@ export const TaskProvider = ({ children }: { children: React.ReactNode }) => {
       return prevTasks.filter((task) => task.id !== taskId);
     });
   };
+
+  const handleMakeTaskComplete = (taskId: string) => {
+    setTaskList((prevTasks) => {
+      return prevTasks.map((task) => 
+        task.id === taskId 
+          ? { ...task, isCompleted: !task.isCompleted }
+          : task
+      );
+    });
+  };
   return (
     <TaskContext.Provider
       value={{
@@ -44,6 +55,7 @@ export const TaskProvider = ({ children }: { children: React.ReactNode }) => {
         setTaskList,
         handleAddTask,
         handleDeleteTask,
+        handleMakeTaskComplete,
       }}
     >
       {children}

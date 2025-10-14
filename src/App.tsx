@@ -1,6 +1,6 @@
 import "./App.css";
 import { useContext } from "react";
-import Header from "./components/header";
+import Header from "./components/Header";
 import TaskDailyProgress from "./components/taskDailyProgress";
 import TaskButton from "./components/taskButton";
 import Calender from "./assets/calender";

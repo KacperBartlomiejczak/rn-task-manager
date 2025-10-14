@@ -52,7 +52,7 @@ function AddTaskForm() {
     setTaskName("");
   };
 
-  console.log(taskList);
+  
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
