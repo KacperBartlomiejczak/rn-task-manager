@@ -1,60 +1,65 @@
-# Nazwa workflow widoczna na GitHubie
+# .github/workflows/deploy.yml
+
+# Name of the workflow visible on GitHub
 name: Deploy to GitHub Pages
 
-# Kiedy workflow ma się uruchamiać
+# Controls when the workflow will run
 on:
-  # Uruchom przy pushu do brancha "main"
+  # Run on pushes to the "main" branch
   push:
     branches: [ "main" ]
-  # Pozwala na ręczne uruchomienie z poziomu zakładki "Actions" na GitHubie
+  # Allows you to run this workflow manually from the Actions tab on GitHub
   workflow_dispatch:
 
-# Ustawienie uprawnień dla GITHUB_TOKEN, aby akcja mogła wdrożyć stronę
+# Set permissions for the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Definicja zadań (jobs) do wykonania
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # Jedno zadanie o nazwie "deploy"
+  # A single job called "deploy"
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest # Uruchom na maszynie z systemem Ubuntu
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
     steps:
-      # Krok 1: Pobranie kodu z repozytorium
+      # Step 1: Check out the repository's code
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Krok 2: Ustawienie środowiska Node.js
+      # Step 2: Set up the Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20 # Możesz zmienić na wersję Node.js, której używasz
+          # You can change this to the Node.js version you use
+          node-version: 20
           cache: 'npm'
 
-      # Krok 3: Instalacja zależności
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Krok 4: Budowanie projektu
+      # Step 4: Build the project
       - name: Build
-        run: npm run build # Upewnij się, że ten skrypt istnieje w package.json
+        # Make sure this script exists in package.json
+        run: npm run build
 
-      # Krok 5: Konfiguracja GitHub Pages
+      # Step 5: Configure GitHub Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # Krok 6: Wgranie zbudowanych plików jako "artefakt"
+      # Step 6: Upload the build files as an artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Ścieżka do folderu z zbudowaną stroną
+          # Path to the folder with the built site
           path: './dist'
 
-      # Krok 7: Wdrożenie artefaktu na GitHub Pages
+      # Step 7: Deploy the artifact to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
