@@ -1,0 +1,60 @@
+# Nazwa workflow widoczna na GitHubie
+name: Deploy to GitHub Pages
+
+# Kiedy workflow ma się uruchamiać
+on:
+  # Uruchom przy pushu do brancha "main"
+  push:
+    branches: [ "main" ]
+  # Pozwala na ręczne uruchomienie z poziomu zakładki "Actions" na GitHubie
+  workflow_dispatch:
+
+# Ustawienie uprawnień dla GITHUB_TOKEN, aby akcja mogła wdrożyć stronę
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Definicja zadań (jobs) do wykonania
+jobs:
+  # Jedno zadanie o nazwie "deploy"
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest # Uruchom na maszynie z systemem Ubuntu
+    steps:
+      # Krok 1: Pobranie kodu z repozytorium
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Krok 2: Ustawienie środowiska Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20 # Możesz zmienić na wersję Node.js, której używasz
+          cache: 'npm'
+
+      # Krok 3: Instalacja zależności
+      - name: Install dependencies
+        run: npm install
+
+      # Krok 4: Budowanie projektu
+      - name: Build
+        run: npm run build # Upewnij się, że ten skrypt istnieje w package.json
+
+      # Krok 5: Konfiguracja GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # Krok 6: Wgranie zbudowanych plików jako "artefakt"
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Ścieżka do folderu z zbudowaną stroną
+          path: './dist'
+
+      # Krok 7: Wdrożenie artefaktu na GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
