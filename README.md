@@ -34,7 +34,7 @@ You need to have [Node.js](https://nodejs.org/en) (which includes npm) installed
 
 1. Clone the repository:
    ```sh
-   git clone <repository-url>
+   git clone https://github.com/KacperBartlomiejczak/rn-task-manager.git
    ```
 2. Navigate to the project directory:
    ```sh
