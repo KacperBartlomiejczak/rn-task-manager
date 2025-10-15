@@ -10,6 +10,8 @@ import NoTaskAvailable from "./components/noTaskAvailable";
 import AddTaskModal from "./components/taskModal/addTaskModal";
 import TaskCards from "./components/taskCard/taskCards";
 
+import ViewDailySummaryDialog from "./components/ViewDailySummaryDialog";
+
 function App() {
   let content = <NoTaskAvailable />;
   const taskContext = useContext(TaskContext);
@@ -31,13 +33,7 @@ function App() {
               totalTasks={taskContext.taskList.length}
               completedTasks={taskContext.completedTasks}
             />
-            <TaskButton
-              title="View Daily Summary"
-              onClick={() => {}}
-              className="hover:bg-green-400 focus:bg-green-400"
-            >
-              <Calender size={24} color="#000000" />
-            </TaskButton>
+            <ViewDailySummaryDialog />
           </div>
           <div className="flex flex-col gap-2 md:flex-2 lg:flex-3">
             <AddTaskModal />

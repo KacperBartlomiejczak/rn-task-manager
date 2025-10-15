@@ -24,8 +24,8 @@ function AddTaskForm() {
   const [isOpen, setIsOpen] = useState(false);
   const taskTitleRef = useRef<HTMLInputElement>(null);
 
-  const { handleAddTask, taskList } = useContext(TaskContext)!;
-  const { selectedRecurrence, selectedDays } = useCheckBoxContext();
+  const { handleAddTask } = useContext(TaskContext)!;
+  const { selectedRecurrence, selectedDays, setSelectedRecurrence, setSelectedDays } = useCheckBoxContext();
 
   if (!handleAddTask) {
     throw new Error("AddTaskModal must be used within TaskProvider");
@@ -50,9 +50,10 @@ function AddTaskForm() {
     handleAddTask(newTask);
     setIsOpen(false);
     setTaskName("");
+    setSelectedRecurrence("one-time");
+    setSelectedDays([]);
   };
 
-  
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
