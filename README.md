@@ -1,73 +1,64 @@
-# React + TypeScript + Vite
+# Todo Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern and feature-rich Todo List application built with React, TypeScript, and Vite. It allows users to manage their daily tasks with advanced features like task recurrence, daily progress tracking, and historical performance summaries.
 
-Currently, two official plugins are available:
+## Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Create, Delete, and Complete Tasks:** Standard functionality for managing tasks.
+- **Task Recurrence:** Set tasks as one-time, daily, or for specific days of the week.
+- **Dynamic Task Filtering:** The task list automatically filters to show only the tasks relevant for the current day.
+- **Daily Progress Tracking:** A visual progress bar and percentage score show how many of the day's tasks are complete.
+- **Confetti Celebration:** A fun emoji confetti animation plays upon completing all tasks for the day.
+- **Historical Summary:** View a history of daily performance in a dialog, showing completion percentages for past days.
+- **Persistent State:** All tasks and historical summary data are saved in the browser's `localStorage`, ensuring your data is preserved across sessions.
+- **Responsive Design:** The layout is designed to work seamlessly on both desktop and mobile devices.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Framework:** [React](https://react.dev/) with [Vite](https://vitejs.dev/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components:** [shadcn/ui](https://ui.shadcn.com/)
+- **Animation:** [react-confetti](https://github.com/alampros/react-confetti)
+- **Linting:** [ESLint](https://eslint.org/)
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+You need to have [Node.js](https://nodejs.org/en) (which includes npm) installed on your system.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Installation
+
+1. Clone the repository:
+   ```sh
+   git clone <repository-url>
+   ```
+2. Navigate to the project directory:
+   ```sh
+   cd todo-manager
+   ```
+3. Install the dependencies:
+   ```sh
+   npm install
+   ```
+
+### Running the Development Server
+
+To start the application in development mode, run the following command. This will open the app on `http://localhost:5173` (or another port if 5173 is busy).
+
+```sh
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Building for Production
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+To create a production-ready build of the application, run:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+npm run build
 ```
+
+This will create a `dist` folder in the project root with the optimized and minified files.

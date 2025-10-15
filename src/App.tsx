@@ -2,8 +2,7 @@ import "./App.css";
 import { useContext } from "react";
 import Header from "./components/Header";
 import TaskDailyProgress from "./components/taskDailyProgress";
-import TaskButton from "./components/taskButton";
-import Calender from "./assets/calender";
+
 
 import { TaskContext } from "./context/taskContext";
 import NoTaskAvailable from "./components/noTaskAvailable";
