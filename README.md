@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/readmeImg.png" alt="Todo Manager Screenshot" width="600"/>
+</p>
+
 # Todo Manager
 
 A modern and feature-rich Todo List application built with React, TypeScript, and Vite. It allows users to manage their daily tasks with advanced features like task recurrence, daily progress tracking, and historical performance summaries.
