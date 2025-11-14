@@ -25,7 +25,7 @@ Here's what you can do with my Task manager:
 2. Run ```npm instal``` or ```yarn``` in the project directory to install the required dependencies.
 3. Run ```npm run start``` or ```yarn start``` to get the project started
 
-
+# Image of app
 <p align="center">
-  <img src="public/readmeImg.png" alt="Todo Manager Screenshot" width="600"/>
+  <img src="public/readmeImg.png" alt="Todo Manager Screenshot" width="600"  style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); " />
 </p>
