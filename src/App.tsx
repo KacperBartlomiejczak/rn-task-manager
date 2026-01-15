@@ -1,5 +1,6 @@
 import "./App.css";
 import { useContext } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Header from "./components/Header";
 import TaskDailyProgress from "./components/taskDailyProgress";
 
@@ -27,7 +28,12 @@ function App() {
       <div className="container mx-auto">
         <Header />
         <DaySelector />
-        <div className="flex flex-col md:flex-row md:gap-4">
+        <motion.div
+          className="flex flex-col md:flex-row md:gap-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
           <div className="flex flex-col md:flex-1">
             <TaskDailyProgress
               totalTasks={taskContext.taskList.length}
@@ -37,9 +43,19 @@ function App() {
           </div>
           <div className="flex flex-col gap-2 md:flex-2 lg:flex-3">
             <AddTaskModal />
-            {content}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={taskContext.taskList.length > 0 ? "tasks" : "empty"}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                {content}
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       </div>
     </main>
   );

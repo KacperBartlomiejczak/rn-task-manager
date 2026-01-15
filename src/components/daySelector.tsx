@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { TaskContext } from "../context/taskContext";
 import { cn } from "../lib/utils"; // Assuming you have a utils file for merging classes, otherwise regular string concat works
 
@@ -31,9 +32,12 @@ export default function DaySelector() {
   }, []);
 
   return (
-    <div
+    <motion.div
       className="w-full overflow-x-auto py-4 no-scrollbar"
       ref={scrollContainerRef}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.2 }}
     >
       <div className="flex gap-3 px-4 min-w-max mx-auto justify-center md:justify-center">
         {dates.map((date) => {
@@ -42,16 +46,24 @@ export default function DaySelector() {
           const isToday = date.toDateString() === today.toDateString();
 
           return (
-            <button
+            <motion.button
               key={date.toISOString()}
               onClick={() => setSelectedDate(date)}
               className={cn(
                 "flex flex-col items-center justify-center min-w-[3.5rem] h-16 rounded-xl transition-all duration-200 border-2",
                 isSelected
-                  ? "bg-black text-white border-black scale-110 shadow-lg"
+                  ? "bg-black text-white border-black shadow-lg"
                   : "bg-white text-gray-500 border-gray-100 hover:border-gray-300 hover:bg-gray-50",
                 isToday && !isSelected && "border-blue-200 text-blue-600"
               )}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              animate={isSelected ? { scale: 1.1, y: -4 } : { scale: 1, y: 0 }}
+              transition={{
+                type: "spring",
+                stiffness: 400,
+                damping: 17,
+              }}
             >
               <span className="text-xs font-medium uppercase">
                 {date.toLocaleDateString("en-US", { weekday: "short" })}
@@ -64,10 +76,10 @@ export default function DaySelector() {
               >
                 {date.getDate()}
               </span>
-            </button>
+            </motion.button>
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }

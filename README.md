@@ -30,7 +30,7 @@ This project is built using the latest web technologies for speed and scalabilit
 - **[Tailwind CSS v4](https://tailwindcss.com/)**: A utility-first CSS framework for rapid UI development.
 - **[Radix UI](https://www.radix-ui.com/)**: Unstyled, accessible components for building high-quality design systems (Dialog, Progress, Checkbox).
 - **[Lucide React](https://lucide.dev/)**: Beautiful & consistent icons.
-- **[Framer Motion](https://www.framer.com/motion/)** (planned): For smooth gesture-based animations.
+- **[Framer Motion](https://www.framer.com/motion/)**: Production-ready motion library for React with spring physics and gesture animations.
 
 ## 🏃‍♂️ Getting Started
 
