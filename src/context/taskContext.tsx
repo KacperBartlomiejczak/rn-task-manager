@@ -8,6 +8,7 @@ interface Task {
   isCompleted: boolean;
   recurrence: RecurrenceType;
   selectedDays?: string[]; // e.g., ["Monday", "Tuesday"]
+  date?: string; // ISO Date string YYYY-MM-DD for one-time tasks
 }
 
 interface TaskContextType {
@@ -18,6 +19,8 @@ interface TaskContextType {
   handleAddTask: (taskData: Task) => void;
   handleDeleteTask: (taskId: string) => void;
   handleMakeTaskComplete: (taskId: string) => void;
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
 }
 
 export const TaskContext = createContext<TaskContextType | null>(null);
@@ -26,48 +29,55 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [allTasks, setAllTasks] = useState<Task[]>(() => {
     try {
       let initialTasks: Task[] = [];
-      const localData = localStorage.getItem('allTasks');
+      const localData = localStorage.getItem("allTasks");
       if (localData) {
         initialTasks = JSON.parse(localData);
       } else {
         // Handle migration from old key 'taskList'
-        const oldData = localStorage.getItem('taskList');
+        const oldData = localStorage.getItem("taskList");
         if (oldData) {
           initialTasks = JSON.parse(oldData);
-          localStorage.setItem('allTasks', oldData);
-          localStorage.removeItem('taskList');
+          localStorage.setItem("allTasks", oldData);
+          localStorage.removeItem("taskList");
         }
       }
 
-      const lastVisit = localStorage.getItem('lastVisitDate');
-      const today = new Date().toISOString().split('T')[0];
+      const lastVisit = localStorage.getItem("lastVisitDate");
+      const today = new Date().toISOString().split("T")[0];
 
       if (lastVisit && lastVisit !== today) {
         // Save summary for the previous day before cleaning up
         const total = initialTasks.length;
         if (total > 0) {
-          const completed = initialTasks.filter(t => t.isCompleted).length;
+          const completed = initialTasks.filter((t) => t.isCompleted).length;
           const newSummary = { date: lastVisit, completed, total };
-          const summaries = JSON.parse(localStorage.getItem('dailySummaries') || '[]');
+          const summaries = JSON.parse(
+            localStorage.getItem("dailySummaries") || "[]"
+          );
           summaries.push(newSummary);
-          localStorage.setItem('dailySummaries', JSON.stringify(summaries));
+          localStorage.setItem("dailySummaries", JSON.stringify(summaries));
         }
 
         // Perform cleanup for the new day
-        localStorage.setItem('lastVisitDate', today);
+        localStorage.setItem("lastVisitDate", today);
         return initialTasks
-          .filter(task => !(task.recurrence === 'one-time' && task.isCompleted))
-          .map(task => {
-            if (task.recurrence === 'every-day' || task.recurrence === 'specific-day') {
+          .filter(
+            (task) => !(task.recurrence === "one-time" && task.isCompleted)
+          )
+          .map((task) => {
+            if (
+              task.recurrence === "every-day" ||
+              task.recurrence === "specific-day"
+            ) {
               return { ...task, isCompleted: false };
             }
             return task;
           });
       } else if (!lastVisit) {
         // First visit ever
-        localStorage.setItem('lastVisitDate', today);
+        localStorage.setItem("lastVisitDate", today);
       }
-      
+
       return initialTasks;
     } catch (error) {
       console.error("Error initializing tasks from localStorage", error);
@@ -77,34 +87,49 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
   const [taskList, setTaskList] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState(0);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   useEffect(() => {
-    localStorage.setItem('allTasks', JSON.stringify(allTasks));
+    localStorage.setItem("allTasks", JSON.stringify(allTasks));
 
-    const todayDayName = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-    const visibleTasks = allTasks.filter(task => {
-      if (task.recurrence === 'specific-day') {
-        return task.selectedDays?.includes(todayDayName);
+    const dayName = selectedDate
+      .toLocaleDateString("en-US", { weekday: "long" })
+      .toLowerCase();
+    const visibleTasks = allTasks.filter((task) => {
+      if (task.recurrence === "specific-day") {
+        return task.selectedDays?.includes(dayName);
+      }
+      if (task.recurrence === "one-time") {
+        // Strict filtering: if it has a date, it must match.
+        if (task.date) {
+          // Compare only the YYYY-MM-DD part
+          const selectedDateString = selectedDate.toISOString().split("T")[0];
+          return task.date === selectedDateString;
+        }
+        // Legacy tasks (no date) show on Today only
+        const todayString = new Date().toISOString().split("T")[0];
+        const selectedDateString = selectedDate.toISOString().split("T")[0];
+        return todayString === selectedDateString;
       }
       return true;
     });
     setTaskList(visibleTasks);
 
-    const completed = visibleTasks.filter(task => task.isCompleted).length;
+    const completed = visibleTasks.filter((task) => task.isCompleted).length;
     setCompletedTasks(completed);
-  }, [allTasks]);
+  }, [allTasks, selectedDate]);
 
   const handleAddTask = (taskData: Task) => {
-    setAllTasks(prevTasks => [...prevTasks, taskData]);
+    setAllTasks((prevTasks) => [...prevTasks, taskData]);
   };
 
   const handleDeleteTask = (taskId: string) => {
-    setAllTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+    setAllTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   };
 
   const handleMakeTaskComplete = (taskId: string) => {
-    setAllTasks(prevTasks =>
-      prevTasks.map(task =>
+    setAllTasks((prevTasks) =>
+      prevTasks.map((task) =>
         task.id === taskId ? { ...task, isCompleted: !task.isCompleted } : task
       )
     );
@@ -120,6 +145,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         handleAddTask,
         handleDeleteTask,
         handleMakeTaskComplete,
+        selectedDate,
+        setSelectedDate,
       }}
     >
       {children}

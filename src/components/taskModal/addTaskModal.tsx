@@ -24,8 +24,13 @@ function AddTaskForm() {
   const [isOpen, setIsOpen] = useState(false);
   const taskTitleRef = useRef<HTMLInputElement>(null);
 
-  const { handleAddTask } = useContext(TaskContext)!;
-  const { selectedRecurrence, selectedDays, setSelectedRecurrence, setSelectedDays } = useCheckBoxContext();
+  const { handleAddTask, selectedDate } = useContext(TaskContext)!;
+  const {
+    selectedRecurrence,
+    selectedDays,
+    setSelectedRecurrence,
+    setSelectedDays,
+  } = useCheckBoxContext();
 
   if (!handleAddTask) {
     throw new Error("AddTaskModal must be used within TaskProvider");
@@ -45,6 +50,10 @@ function AddTaskForm() {
       recurrence: selectedRecurrence,
       // Only include selectedDays if recurrence is "specific-day"
       ...(selectedRecurrence === "specific-day" && { selectedDays }),
+      // Strict date for one-time tasks
+      ...(selectedRecurrence === "one-time" && {
+        date: selectedDate.toISOString().split("T")[0],
+      }),
     };
 
     handleAddTask(newTask);
@@ -57,20 +66,18 @@ function AddTaskForm() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <TaskButton
-          title="Add Task"
-          className="bg-green-400 hover:bg-green-600 focus:bg-green-600 "
-        />
+        <TaskButton title="Add Task" />
       </DialogTrigger>
       <DialogContent aria-describedby="dialog-description">
         <form className="flex flex-col mb-2" onSubmit={handleSubmitTask}>
           <DialogTitle className="font-bold text-xl">
             Create new task
           </DialogTitle>
-          <p id="dialog-description" className="text-gray-500 mb-4">
+          <p id="dialog-description" className="text-gray-400 mb-4">
             Add a task with optional recurring schedule
           </p>
           <Input
+            className="glass bg-black/20 border-white/10 text-white placeholder:text-gray-500"
             placeholder="Task Name"
             required
             value={taskName}
@@ -81,7 +88,7 @@ function AddTaskForm() {
           <TaskCheckBoxes />
           <Button
             type="submit"
-            className="bg-green-400 hover:bg-green-500"
+            className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white transition-all duration-300 hover:scale-[1.02]"
             disabled={!taskName.trim()}
           >
             Create Task

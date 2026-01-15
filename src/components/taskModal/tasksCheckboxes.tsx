@@ -30,7 +30,7 @@ export default function TaskCheckBoxes() {
         onChange={() => setSelectedRecurrence("specific-day")}
       />
       {selectedRecurrence === "specific-day" && (
-        <div className="bg-gray-50 p-4 rounded-xl">
+        <div className="bg-card/30 backdrop-blur-sm border border-white/5 p-4 rounded-xl">
           <h4>Select Days</h4>
           <div className=" flex  flex-wrap  gap-5 m-4 ">
             <TaskCheckBox

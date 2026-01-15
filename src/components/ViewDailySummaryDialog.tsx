@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,9 +22,14 @@ export default function ViewDailySummaryDialog() {
 
   useEffect(() => {
     if (isOpen) {
-      const storedSummaries = JSON.parse(localStorage.getItem('dailySummaries') || '[]');
+      const storedSummaries = JSON.parse(
+        localStorage.getItem("dailySummaries") || "[]"
+      );
       // sort by date descending
-      storedSummaries.sort((a: Summary, b: Summary) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      storedSummaries.sort(
+        (a: Summary, b: Summary) =>
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
       setSummaries(storedSummaries);
     }
   }, [isOpen]);
@@ -49,12 +54,19 @@ export default function ViewDailySummaryDialog() {
           ) : (
             <ul className="space-y-4">
               {summaries.map((summary) => {
-                const percentage = summary.total > 0 ? (summary.completed / summary.total) * 100 : 0;
+                const percentage =
+                  summary.total > 0
+                    ? (summary.completed / summary.total) * 100
+                    : 0;
                 return (
                   <li key={summary.date} className="rounded-lg border p-4">
                     <div className="flex justify-between items-center">
-                      <p className="font-semibold">{new Date(summary.date).toLocaleDateString()}</p>
-                      <p className="text-sm font-bold">{Math.round(percentage)}%</p>
+                      <p className="font-semibold">
+                        {new Date(summary.date).toLocaleDateString()}
+                      </p>
+                      <p className="text-sm font-bold">
+                        {Math.round(percentage)}%
+                      </p>
                     </div>
                     <Progress value={percentage} className="mt-2" />
                     <p className="text-xs text-gray-500 mt-1 text-right">{`${summary.completed} / ${summary.total} tasks`}</p>
