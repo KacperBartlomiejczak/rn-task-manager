@@ -9,6 +9,7 @@ interface Task {
   recurrence: RecurrenceType;
   selectedDays?: string[]; // e.g., ["Monday", "Tuesday"]
   date?: string; // ISO Date string YYYY-MM-DD for one-time tasks
+  emoji?: string;
 }
 
 interface TaskContextType {
@@ -19,6 +20,7 @@ interface TaskContextType {
   handleAddTask: (taskData: Task) => void;
   handleDeleteTask: (taskId: string) => void;
   handleMakeTaskComplete: (taskId: string) => void;
+  handleUpdateTask: (updatedTask: Task) => void;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
 }
@@ -135,6 +137,12 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const handleUpdateTask = (updatedTask: Task) => {
+    setAllTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+    );
+  };
+
   return (
     <TaskContext.Provider
       value={{
@@ -145,6 +153,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         handleAddTask,
         handleDeleteTask,
         handleMakeTaskComplete,
+        handleUpdateTask,
         selectedDate,
         setSelectedDate,
       }}

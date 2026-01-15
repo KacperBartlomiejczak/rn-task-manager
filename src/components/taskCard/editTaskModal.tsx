@@ -1,11 +1,12 @@
-import React, { useRef, useState, useContext } from "react";
+import React, { useRef, useState, useContext, useEffect } from "react";
+import { Pencil } from "lucide-react";
+import { TASK_CATEGORIES } from "@/lib/constants";
 
 //Context
-import TaskCheckBoxes from "./tasksCheckboxes";
+import TaskCheckBoxes from "../taskModal/tasksCheckboxes";
 import { TaskContext } from "@/context/taskContext";
 import type { Task } from "@/context/taskContext";
 //Components
-import TaskButton from "../taskButton";
 import {
   Dialog,
   DialogContent,
@@ -19,15 +20,20 @@ import {
   useCheckBoxContext,
 } from "@/context/checkBoxContext";
 
-import { TASK_CATEGORIES } from "@/lib/constants";
+interface EditTaskModalProps {
+  task: Task;
+}
 
-function AddTaskForm() {
-  const [taskName, setTaskName] = useState("");
+function EditTaskForm({ task }: EditTaskModalProps) {
+  const [taskName, setTaskName] = useState(task.title);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedEmoji, setSelectedEmoji] = useState(TASK_CATEGORIES[0].emoji);
+  const [selectedEmoji, setSelectedEmoji] = useState(
+    task.emoji || TASK_CATEGORIES[0].emoji
+  );
   const taskTitleRef = useRef<HTMLInputElement>(null);
 
-  const { handleAddTask, selectedDate } = useContext(TaskContext)!;
+  const { handleUpdateTask, selectedDate: contextDate } =
+    useContext(TaskContext)!;
   const {
     selectedRecurrence,
     selectedDays,
@@ -35,64 +41,67 @@ function AddTaskForm() {
     setSelectedDays,
   } = useCheckBoxContext();
 
-  if (!handleAddTask) {
-    throw new Error("AddTaskModal must be used within TaskProvider");
-  }
+  // Initialize form with task data when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setTaskName(task.title);
+      setSelectedRecurrence(task.recurrence);
+      setSelectedDays(task.selectedDays || []);
+      setSelectedEmoji(task.emoji || TASK_CATEGORIES[0].emoji);
+    }
+  }, [isOpen, task, setSelectedRecurrence, setSelectedDays]);
 
   const handleSubmitTask = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const id = Date.now().toString();
     const title = taskTitleRef.current?.value || "";
 
-    // Create the task object with recurrence data
-    const newTask: Task = {
-      id,
+    const updatedTask: Task = {
+      ...task,
       title,
-      isCompleted: false,
-      recurrence: selectedRecurrence,
       emoji: selectedEmoji,
+      recurrence: selectedRecurrence,
       // Only include selectedDays if recurrence is "specific-day"
-      ...(selectedRecurrence === "specific-day" && { selectedDays }),
-      // Strict date for one-time tasks
-      ...(selectedRecurrence === "one-time" && {
-        date: selectedDate.toISOString().split("T")[0],
-      }),
+      selectedDays: selectedRecurrence === "specific-day" ? selectedDays : [],
+      // Use parent context date for one-time tasks, or keep existing if it's already one-time
+      date:
+        selectedRecurrence === "one-time"
+          ? task.recurrence === "one-time"
+            ? task.date
+            : contextDate.toISOString().split("T")[0]
+          : undefined,
     };
 
-    handleAddTask(newTask);
+    handleUpdateTask(updatedTask);
     setIsOpen(false);
-    setTaskName("");
-    setSelectedEmoji(TASK_CATEGORIES[0].emoji);
-    setSelectedRecurrence("one-time");
-    setSelectedDays([]);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <TaskButton title="Add Task" />
+        <Button
+          variant="secondary"
+          size="sm"
+          className="flex items-center gap-2 cursor-pointer bg-white/10 hover:bg-white/20 text-white border-0"
+        >
+          <span className="hidden sm:inline">Edit</span>
+          <Pencil size={16} />
+        </Button>
       </DialogTrigger>
-      <DialogContent
-        aria-describedby="dialog-description"
-        className="glass bg-black/40 border-white/10 text-white backdrop-blur-2xl"
-      >
+      <DialogContent aria-describedby="edit-dialog-description">
         <form className="flex flex-col mb-2" onSubmit={handleSubmitTask}>
-          <DialogTitle className="font-bold text-2xl bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-            Create new task
-          </DialogTitle>
-          <p id="dialog-description" className="text-gray-400 mb-6 text-sm">
-            Add a task with optional recurring schedule
+          <DialogTitle className="font-bold text-xl">Edit Task</DialogTitle>
+          <p id="edit-dialog-description" className="text-gray-400 mb-4">
+            Update task details and recurrence
           </p>
-
-          <div className="space-y-6">
+          <div className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300">
                 Task Name
               </label>
               <Input
                 className="glass bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:ring-violet-500/50"
-                placeholder="What needs to be done?"
+                placeholder="Task Name"
                 required
                 value={taskName}
                 ref={taskTitleRef}
@@ -100,9 +109,9 @@ function AddTaskForm() {
               />
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300">
-                Choose Icon
+                Icon / Category
               </label>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-3 rounded-2xl bg-white/5 border border-white/10">
                 {TASK_CATEGORIES.map((cat) => (
@@ -125,7 +134,7 @@ function AddTaskForm() {
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300">
                 Recurrence
               </label>
@@ -133,25 +142,24 @@ function AddTaskForm() {
                 <TaskCheckBoxes />
               </div>
             </div>
-
-            <Button
-              type="submit"
-              className="w-full h-12 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:scale-[1.02] active:scale-[0.98]"
-              disabled={!taskName.trim()}
-            >
-              Create Task
-            </Button>
           </div>
+          <Button
+            type="submit"
+            className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white transition-all duration-300 hover:scale-[1.02]"
+            disabled={!taskName.trim()}
+          >
+            Save Changes
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
   );
 }
 
-export default function AddTaskModal() {
+export default function EditTaskModal({ task }: EditTaskModalProps) {
   return (
     <CheckBoxProvider>
-      <AddTaskForm />
+      <EditTaskForm task={task} />
     </CheckBoxProvider>
   );
 }

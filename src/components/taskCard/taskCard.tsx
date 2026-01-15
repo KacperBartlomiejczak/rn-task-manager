@@ -6,6 +6,7 @@ import { Card, CardContent } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
 import type { Task } from "@/context/taskContext";
 import DeleteDialogTaskCard from "./deleteDialogtaskCard";
+import EditTaskModal from "./editTaskModal";
 
 import { TaskContext } from "@/context/taskContext";
 
@@ -178,7 +179,7 @@ export default function TaskCard({ task }: { task: Task }) {
                   }
                   transition={{ duration: 0.5 }}
                 >
-                  {getTaskTypeIcon(task.recurrence)}
+                  {task.emoji || getTaskTypeIcon(task.recurrence)}
                 </motion.span>
                 <motion.h3
                   className={`font-semibold text-base sm:text-lg truncate transition-all duration-300 ${
@@ -211,8 +212,9 @@ export default function TaskCard({ task }: { task: Task }) {
               </motion.div>
             </div>
 
-            {/* Delete button - shows on hover */}
+            {/* Task actions - shows on hover */}
             <motion.div
+              className="flex items-center gap-1"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{
                 opacity: isHovered || task.isCompleted ? 1 : 0.7,
@@ -220,6 +222,7 @@ export default function TaskCard({ task }: { task: Task }) {
               }}
               transition={{ duration: 0.2 }}
             >
+              <EditTaskModal task={task} />
               <DeleteDialogTaskCard taskId={task.id} />
             </motion.div>
           </div>

@@ -30,51 +30,36 @@ export default function TaskCheckBoxes() {
         onChange={() => setSelectedRecurrence("specific-day")}
       />
       {selectedRecurrence === "specific-day" && (
-        <div className="bg-card/30 backdrop-blur-sm border border-white/5 p-4 rounded-xl">
-          <h4>Select Days</h4>
-          <div className=" flex  flex-wrap  gap-5 m-4 ">
-            <TaskCheckBox
-              label="Monday"
-              id="monday"
-              checked={selectedDays.includes("monday")}
-              onChange={() => handleDaysToggle("monday")}
-            />
-            <TaskCheckBox
-              label="Tuesday"
-              id="tuesday"
-              checked={selectedDays.includes("tuesday")}
-              onChange={() => handleDaysToggle("tuesday")}
-            />
-            <TaskCheckBox
-              label="Wednesday"
-              id="wednesday"
-              checked={selectedDays.includes("wednesday")}
-              onChange={() => handleDaysToggle("wednesday")}
-            />
-            <TaskCheckBox
-              label="Thursday"
-              id="thursday"
-              checked={selectedDays.includes("thursday")}
-              onChange={() => handleDaysToggle("thursday")}
-            />
-            <TaskCheckBox
-              label="Friday"
-              id="friday"
-              checked={selectedDays.includes("friday")}
-              onChange={() => handleDaysToggle("friday")}
-            />
-            <TaskCheckBox
-              label="Saturday"
-              id="saturday"
-              checked={selectedDays.includes("saturday")}
-              onChange={() => handleDaysToggle("saturday")}
-            />
-            <TaskCheckBox
-              label="Sunday"
-              id="sunday"
-              checked={selectedDays.includes("sunday")}
-              onChange={() => handleDaysToggle("sunday")}
-            />
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl space-y-3 mt-4">
+          <h4 className="text-sm font-semibold text-gray-300 px-1">
+            Select Days
+          </h4>
+          <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+            {[
+              { id: "monday", label: "Mon" },
+              { id: "tuesday", label: "Tue" },
+              { id: "wednesday", label: "Wed" },
+              { id: "thursday", label: "Thu" },
+              { id: "friday", label: "Fri" },
+              { id: "saturday", label: "Sat" },
+              { id: "sunday", label: "Sun" },
+            ].map((day) => {
+              const isSelected = selectedDays.includes(day.id);
+              return (
+                <button
+                  key={day.id}
+                  type="button"
+                  onClick={() => handleDaysToggle(day.id)}
+                  className={`flex flex-col items-center justify-center h-12 rounded-xl transition-all duration-300 border-2 text-xs font-bold ${
+                    isSelected
+                      ? "bg-violet-600/40 border-violet-500 text-white shadow-[0_0_15px_rgba(139,92,246,0.3)] scale-105"
+                      : "bg-white/5 border-transparent text-gray-500 hover:bg-white/10 hover:border-white/10"
+                  }`}
+                >
+                  {day.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
